@@ -1,3 +1,163 @@
-Name : AHUMUZA CONLEY MUTUNGI
-Student ID : 
-Date : 
+SQL INJECTION PRACTICAL ASSIGNMENT - ANSWERS
+============================================================
+Name:       AHUMUZA CONLEY MUTUNGI
+Student ID: [Your ID]
+Track:      Python
+Date:       [Date]
+GitHub:     https://github.com/ConleyMutungi/nyondo-sql-lab
+============================================================
+
+
+TASK 1 - DATABASE SETUP
+============================================================
+
+setup.py code:
+[paste your setup.py code here]
+
+Output from SELECT * (copy from your terminal):
+[paste the terminal output showing all 5 products here]
+
+
+TASK 2 - QUERIES
+============================================================
+
+queries.py code:
+[paste your queries.py code here]
+
+Query A output:
+[paste output here]
+
+Query B output:
+[paste output here]
+
+Query C output:
+[paste output here]
+
+Query D output:
+[paste output here]
+
+Query E output:
+[paste output here]
+
+Query F output:
+[paste output here]
+
+Query G output (before and after price):
+[paste output here]
+
+
+TASK 3 - ATTACKS
+============================================================
+
+vulnerable.py code:
+[paste your vulnerable.py code here]
+
+---
+
+ATTACK 1 - OR 1=1
+Query that printed:
+[copy the "Query built:" line from terminal]
+
+Result:
+[copy the rows that came back]
+
+Why it worked (in your own words):
+[explain here - example: The ' closed the string early and OR 1=1
+made every row pass the WHERE check so all products came back]
+
+---
+
+ATTACK 2 - Login bypass (admin'--)
+Query that printed:
+[copy the "Query built:" line from terminal]
+
+Result:
+[copy the LOGIN SUCCESS / LOGIN FAILED line]
+
+Why it worked:
+[explain here]
+
+---
+
+ATTACK 3 - Always true (' OR '1'='1)
+Query that printed:
+[copy the "Query built:" line]
+
+Result:
+[copy the result]
+
+Why it worked:
+[explain here]
+
+---
+
+ATTACK 4 - UNION attack
+Query that printed:
+[copy the "Query built:" line]
+
+Result (what data came back):
+[copy the rows - did you see usernames and passwords?]
+
+Why it worked:
+[explain here]
+
+
+TASK 4 - SECURE VERSION
+============================================================
+
+secure.py code:
+[paste your secure.py code here]
+
+Output when attacks are run against secure functions
+(all must show 0 rows or LOGIN FAILED):
+
+Attack 1 output:
+[paste here]
+
+Attack 2 output:
+[paste here]
+
+Attack 3 output:
+[paste here]
+
+Attack 4 output:
+[paste here]
+
+Explanation - WHY do parameterised queries work?
+(write in your own words - 3 to 5 sentences):
+[write your explanation here]
+
+Example answer:
+With an f-string, Python builds one complete string and gives it to
+sqlite3. The database cannot tell which part the developer wrote and
+which part the attacker typed. With a ? placeholder, sqlite3 receives
+two things separately: the query structure and the value. The structure
+is fixed first. Then the value is slotted in as pure data - it can
+never change the structure or be interpreted as a SQL command.
+
+
+TASK 5 - VALIDATION
+============================================================
+
+secure.py with validation added:
+[paste your updated secure.py here]
+
+Test case results (copy from terminal):
+
+Test 1 - search 'cement':
+[paste output - should work and return the product]
+
+Test 2 - search '':
+[paste output - should say REJECTED]
+
+Test 3 - search '<script>':
+[paste output - should say REJECTED]
+
+Test 4 - login admin/admin123:
+[paste output - should say LOGIN SUCCESS]
+
+Test 5 - login admin/ab:
+[paste output - should say REJECTED password too short]
+
+Test 6 - login 'ad min'/pass123:
+[paste output - should say REJECTED username]
