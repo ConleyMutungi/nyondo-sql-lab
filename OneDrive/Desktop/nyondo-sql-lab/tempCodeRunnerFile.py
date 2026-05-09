@@ -1,0 +1,1 @@
+search_product("' OR 1=1--")
