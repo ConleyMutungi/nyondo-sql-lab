@@ -28,10 +28,10 @@ def validate_name(name):
         print("Error: name must be a string")
         return False
     if len(name) < 2:
-        print("Error: name must be at least 2 characters")
+        print("Error: name must be at least 2 characters - REJECTED")
         return False
     if any(c in name for c in "<>;"):
-        print("Error: name contains invalid characters")
+        print("Error: name contains invalid characters - REJECTED")
         return False
     return True
 
@@ -39,31 +39,31 @@ def validate_price(price):
     try:
         price = float(price)
         if price <= 0:
-            print("Error: price must be positive")
+            print("Error: price must be positive - REJECTED")
             return False
     except ValueError:
-        print("Error: price must be a number")
+        print("Error: price must be a number - REJECTED")
         return False
     return True
 
 def validate_username(username):
     if not isinstance(username, str):
-        print("Error: username must be a string")
+        print("Error: username must be a string - REJECTED")
         return False
     if not username.strip():
-        print("Error: username cannot be empty")
+        print("Error: username cannot be empty - REJECTED")
         return False
     if " " in username:
-        print("Error: username cannot contain spaces")
+        print("Error: username cannot contain spaces - REJECTED")
         return False
     return True
 
 def validate_password(password):
     if not isinstance(password, str):
-        print("Error: password must be a string")
+        print("Error: password must be a string - REJECTED ")
         return False
     if len(password) < 6:
-        print("Error: password must be at least 6 characters")
+        print("Error: password must be at least 6 characters - REJECTED")
         return False
     return True
 
